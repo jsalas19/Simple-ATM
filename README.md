@@ -5,4 +5,5 @@ When I took my first computer science course we were tasked with creating a simp
 - Withdraw from a user's account
 - Validate a user's credentials
 - Lock a user out if too many attempts were used in trying to access a user's information
+
 And so I wanted to improve not only the runtime but also the readability and space comlexity of the program.
