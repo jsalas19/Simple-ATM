@@ -1,4 +1,4 @@
-# Improved-CS1-Project
+# Simple ATM
 When I took my first computer science course we were tasked with creating a simplified ATM program that would allow a user to do a few things:
 - Check the user's balance
 - Deposit into a user's account
