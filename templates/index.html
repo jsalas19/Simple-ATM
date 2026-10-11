@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102820">
+  <title>Simple ATM</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="{{ url_for('index') }}" aria-label="Simple ATM home">
+        <span class="brand-mark" aria-hidden="true">S</span>
+        <span>Simple<span class="brand-light">ATM</span></span>
+      </a>
+      <span class="secure-label"><span class="status-dot"></span> LOCAL DEMO</span>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <section class="messages" aria-live="polite" aria-label="Notifications">
+          {% for category, message in messages %}
+            <p class="notice notice-{{ category }}">{{ message }}</p>
+          {% endfor %}
+        </section>
+      {% endif %}
+    {% endwith %}
+
+    {% if balance_display is none %}
+      <section class="login-card">
+        <div class="eyebrow">WELCOME BACK</div>
+        <h1>Your money,<br>within reach.</h1>
+        <p class="intro">Enter your account PIN to securely access your ATM.</p>
+        <form action="{{ url_for('login') }}" method="post" class="stack">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <label for="pin">Account PIN (4-12 digits)</label>
+          <input id="pin" name="pin" type="password" inputmode="numeric"
+                 autocomplete="current-password" minlength="4" maxlength="12"
+                 pattern="[0-9]{4,12}" placeholder="••••" required autofocus>
+          <button class="button button-primary" type="submit">Access account <span aria-hidden="true">→</span></button>
+        </form>
+        {% if show_demo_pin %}
+          <p class="demo-hint">Demo PIN: <code>1234</code></p>
+        {% endif %}
+      </section>
+    {% else %}
+      <section class="dashboard">
+        <div class="dashboard-heading">
+          <div>
+            <div class="eyebrow">ACCOUNT OVERVIEW</div>
+            <h1>Good to see you.</h1>
+          </div>
+          <form action="{{ url_for('logout') }}" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="button button-quiet" type="submit">Sign out <span aria-hidden="true">↗</span></button>
+          </form>
+        </div>
+
+        <section class="balance-card" aria-label="Account balance">
+          <div class="balance-topline">
+            <span>AVAILABLE BALANCE</span>
+            <span class="balance-chip"><span class="status-dot"></span> ACTIVE</span>
+          </div>
+          <p class="balance">{{ balance_display }}</p>
+          <div class="account-caption"><span class="card-icon" aria-hidden="true">▤</span> Everyday account <span class="account-number">•••• 2048</span></div>
+        </section>
+
+        <section class="actions">
+          <div class="section-heading">
+            <div>
+              <div class="eyebrow">QUICK ACTIONS</div>
+              <h2>Move your money</h2>
+            </div>
+            <span class="currency-tag">USD&nbsp; $</span>
+          </div>
+          <div class="action-grid">
+            <form action="{{ url_for('transaction') }}" method="post" class="action-card">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input type="hidden" name="operation" value="deposit">
+              <span class="action-icon deposit-icon" aria-hidden="true">↓</span>
+              <h3>Deposit</h3>
+              <p>Add funds to your account.</p>
+              <label class="visually-hidden" for="deposit-amount">Deposit amount in dollars</label>
+              <div class="amount-field"><span>$</span><input id="deposit-amount" name="amount" type="number" min="0.01" step="0.01" placeholder="0.00" required></div>
+              <button class="button button-primary" type="submit">Deposit funds</button>
+            </form>
+
+            <form action="{{ url_for('transaction') }}" method="post" class="action-card">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input type="hidden" name="operation" value="withdraw">
+              <span class="action-icon withdraw-icon" aria-hidden="true">↑</span>
+              <h3>Withdraw</h3>
+              <p>Take funds out of your account.</p>
+              <label class="visually-hidden" for="withdraw-amount">Withdrawal amount in dollars</label>
+              <div class="amount-field"><span>$</span><input id="withdraw-amount" name="amount" type="number" min="0.01" step="0.01" placeholder="0.00" required></div>
+              <button class="button button-secondary" type="submit">Withdraw funds</button>
+            </form>
+          </div>
+        </section>
+      </section>
+    {% endif %}
+
+    <footer><span>Simple ATM</span><span>YOUR ACCOUNT, MADE SIMPLE</span></footer>
+  </main>
+</body>
+</html>
